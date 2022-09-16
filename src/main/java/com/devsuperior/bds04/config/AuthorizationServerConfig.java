@@ -18,8 +18,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import com.devsuperior.bds04.components.JwtTokenEnhancer;
 
-
-
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -68,7 +66,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		
 		TokenEnhancerChain chain = new TokenEnhancerChain();
 		chain.setTokenEnhancers(Arrays.asList(accessTokenConverter, tokenEnhancer));
-		
 		
 		endpoints.authenticationManager(authenticationManager)
 		.tokenStore(tokenStore)

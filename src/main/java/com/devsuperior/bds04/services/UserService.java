@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,19 +29,16 @@ import com.devsuperior.bds04.services.exceptions.DatabaseException;
 import com.devsuperior.bds04.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class UserService implements UserDetailsService{
-	
+public class UserService implements UserDetailsService {
+
 	private static Logger logger = LoggerFactory.getLogger(UserService.class);
-	
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserRepository repository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAllPaged(Pageable pageable) {
 		Page<User> list = repository.findAll(pageable);
@@ -60,12 +56,10 @@ public class UserService implements UserDetailsService{
 	public UserDTO insert(UserInsertDTO dto) {
 		User entity = new User();
 		copyDtoToEntity(dto, entity);
-		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity = repository.save(entity);
 		return new UserDTO(entity);
 
 	}
-
 
 	@Transactional
 	public UserDTO update(Long id, UserUpdateDTO dto) {
@@ -74,20 +68,17 @@ public class UserService implements UserDetailsService{
 			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new UserDTO(entity);
-		}
-		catch(EntityNotFoundException e){
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found" + id);
 		}
 	}
 
 	public void delete(Long id) {
 		try {
-		repository.deleteById(id);
-		}
-		catch(EmptyResultDataAccessException e) {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
 			throw new ResourceNotFoundException("Id not found" + id);
-		}
-		catch(DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
@@ -95,9 +86,8 @@ public class UserService implements UserDetailsService{
 	private void copyDtoToEntity(UserDTO dto, User entity) {
 		entity.setEmail(dto.getEmail());
 
-		
 		entity.getRoles().clear();
-		for(RoleDTO roleDto : dto.getRoles()) {
+		for (RoleDTO roleDto : dto.getRoles()) {
 			Role role = roleRepository.getOne(roleDto.getId());
 			entity.getRoles().add(role);
 		}

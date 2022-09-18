@@ -28,7 +28,7 @@ public class EventService {
 	private EventRepository repository;
 
 	@Autowired
-	private CityRepository categoryRepository;
+	private CityRepository cityRepository;
 
 	@Transactional(readOnly = true)
 	public Page<EventDTO> findAllPaged(Pageable pageable) {
@@ -45,8 +45,7 @@ public class EventService {
 
 	@Transactional
 	public EventDTO insert(EventDTO dto) {
-		Event entity = new Event();
-		copyDtoToEntity(dto, entity);
+		Event entity = copyDtoToEntity(dto);
 		entity = repository.save(entity);
 		return new EventDTO(entity);
 
@@ -56,7 +55,7 @@ public class EventService {
 	public EventDTO update(Long id, EventDTO dto) {
 		try {
 			Event entity = repository.getOne(id);
-			copyDtoToEntity(dto, entity);
+//			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new EventDTO(entity);
 		} catch (EntityNotFoundException e) {
@@ -74,9 +73,12 @@ public class EventService {
 		}
 	}
 
-	private void copyDtoToEntity(EventDTO dto, Event entity) {
+	private Event copyDtoToEntity(EventDTO dto) {
+		Event entity = new Event();
 		entity.setName(dto.getName());
 		entity.setDate(dto.getDate());
-		
+		entity.setUrl(dto.getUrl());
+		entity.setCity(cityRepository.getOne(dto.getCityId()));
+		return entity;
 	}
 }

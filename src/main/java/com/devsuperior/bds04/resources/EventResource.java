@@ -22,7 +22,7 @@ import com.devsuperior.bds04.dto.EventDTO;
 import com.devsuperior.bds04.services.EventService;
 
 @RestController
-@RequestMapping(value = "/products")
+@RequestMapping(value = "/events")
 public class EventResource {
 	
 	@Autowired
